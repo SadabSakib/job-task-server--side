@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"], 
+    origin: ["http://localhost:5173", "https://coffee-store-79c97.web.app"],
     credentials: true,
   })
 );
@@ -285,9 +285,6 @@ async function run() {
       const result = await visaCollection.insertOne(newVisa);
       res.send(result);
     });
-
-
-
 
     // Users related apis
     app.get("/users", verifytoken, async (req, res) => {
