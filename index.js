@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173"], 
     credentials: true,
   })
 );
@@ -412,137 +412,8 @@ async function run() {
       res.send(result);
     });
 
-    // nicher eta nia kaj korte hbe
-    // app.get("/applyvisa/:userEmail", verifytoken, async (req, res) => {
-    //   const email = req.params.userEmail;
-    //   const query = { email: email };
-    //   if (req.user.email !== email) {
-    //     return res
-    //       .status(403)
-    //       .send({ message: "forbidden accees dure giya mor" });
-    //   }
-    //   const cursor = appliedVisaCollection.find(query);
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    // });
-    // app.post("/applyVisas", async (req, res) => {
-    //   const newAppliedVisa = req.body;
-    //   console.log(newAppliedVisa);
-    //   console.log(req.cookies);
-    //   const result = await appliedVisaCollection.insertOne(newAppliedVisa);
-    //   res.send(result);
-    // });
-    // app.delete("/myVisaApplication/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await appliedVisaCollection.deleteOne(query);
-    //   res.send(result);
-    // });
 
-    // // for searching
-    // app.get("/search", async (req, res) => {
-    //   const query = req.query.q;
-    //   const visas = await visaCollection
-    //     .find({ countryName: { $regex: query, $options: "i" } })
-    //     .toArray();
-    //   res.json(visas);
-    // });
 
-    // app.get("/visa/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await visaCollection.findOne(query);
-    //   res.send(result);
-    // });
-    // app.get("/visas/:userEmail", verifytoken, async (req, res) => {
-    //   const email = req.params.userEmail;
-    //   const query = { email: email };
-    //   if (req.user.email !== email) {
-    //     return res.status(403).send({ message: "forbidden access" });
-    //   }
-    //   const cursor = visaCollection.find(query);
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    // });
-    // app.put("/visa/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: new ObjectId(id) };
-    //   const options = { upsert: true };
-    //   const updatedVisas = req.body;
-
-    //   const visa = {
-    //     $set: {
-    //       countryImage: updatedVisas.countryImage,
-    //       countryName: updatedVisas.countryName,
-    //       visaType: updatedVisas.visaType,
-    //       processingTime: updatedVisas.processingTime,
-    //       requiredDocuments: updatedVisas.requiredDocuments,
-    //       description: updatedVisas.description,
-    //       ageRestriction: updatedVisas.ageRestriction,
-    //       fee: updatedVisas.fee,
-    //       validity: updatedVisas.validity,
-    //       applicationMethod: updatedVisas.applicationMethod,
-    //       email: updatedVisas.email,
-    //     },
-    //   };
-    //   const result = await visaCollection.updateOne(filter, visa, options);
-    //   res.send(result);
-    // });
-
-    // app.delete("/visa/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await visaCollection.deleteOne(query);
-    //   res.send(result);
-    // });
-
-    // // cofee
-    // app.get("/coffee", async (req, res) => {
-    //   const cursor = coffeeCollection.find();
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    //   console.log(result);
-    // });
-    // app.get("/coffee/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await coffeeCollection.findOne(query);
-    //   res.send(result);
-    // });
-    // app.post("/coffee", async (req, res) => {
-    //   const newCoffee = req.body;
-    //   console.log(newCoffee);
-    //   const result = await coffeeCollection.insertOne(newCoffee);
-    //   res.send(result);
-    // });
-
-    // app.put("/coffee/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: new ObjectId(id) };
-    //   const options = { upsert: true };
-    //   const updatedCoffee = req.body;
-
-    //   const coffee = {
-    //     $set: {
-    //       name: updatedCoffee.name,
-    //       chef: updatedCoffee.chef,
-    //       supplier: updatedCoffee.supplier,
-    //       taste: updatedCoffee.taste,
-    //       category: updatedCoffee.category,
-    //       details: updatedCoffee.details,
-    //       photo: updatedCoffee.photo,
-    //     },
-    //   };
-    //   const result = await coffeeCollection.updateOne(filter, coffee, options);
-    //   res.send(result);
-    // });
-
-    // app.delete("/coffee/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await coffeeCollection.deleteOne(query);
-    //   res.send(result);
-    // });
 
     // Users related apis
     app.get("/users", verifytoken, async (req, res) => {
