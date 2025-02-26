@@ -7,10 +7,17 @@ var jwt = require("jsonwebtoken");
 // var token = jwt.sign({ foo: "bar" }, "shhhhh");
 const app = express();
 const port = process.env.PORT || 5000;
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+};
 
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://coffee-store-79c97.web.app"],
+    methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
@@ -54,7 +61,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const coffeeCollection = client.db("coffeeDB").collection("coffee");
 
@@ -78,11 +85,45 @@ async function run() {
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: false,
+          // secure: false,
+          secure: process.env.NODE_ENV === "production", // True for production
+          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
         })
         .send({ success: true });
       // res.send(token);
     });
+    // Users related apis
+    app.get("/users", verifytoken, async (req, res) => {
+      const cursor = userCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+      console.log(req.cookies);
+    });
+    app.post("/users", async (req, res) => {
+      const newUser = req.body;
+      const result = await userCollection.insertOne(newUser);
+      res.send(result);
+    });
+
+    app.patch("/users", verifytoken, async (req, res) => {
+      const email = req.body.email;
+      const filter = { email };
+      const updatedLoginTime = {
+        $set: {
+          lastSignInTime: req.body?.lastSignInTime,
+        },
+      };
+      const result = await userCollection.updateOne(filter, updatedLoginTime);
+      res.send(result);
+    });
+
+    app.delete("/users/:id", verifytoken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.get("/artifacts/:id", verifytoken, async (req, res) => {
       const { id } = req.params;
       const query = { _id: new ObjectId(id) };
@@ -227,16 +268,26 @@ async function run() {
       res.send(result);
     });
 
-    app.post("/logout", (req, res) => {
+    // app.post("/logout", (req, res) => {
+    //   res
+    //     .clearCookie("token", {
+    //       httpOnly: true,
+    //       secure: process.env.NODE_ENV === "production",
+    //       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    //     })
+    //     .send({ success: true });
+    // });
+
+    // Update artifact endpoint
+
+    app.post("/logout", async (req, res) => {
+      const user = req.body;
+      console.log("logging out", user);
       res
-        .clearCookie("token", {
-          httpOnly: true,
-          secure: false,
-        })
+        .clearCookie("token", { ...cookieOptions, maxAge: 0 })
         .send({ success: true });
     });
 
-    // Update artifact endpoint
     app.put("/artifacts/:id", verifytoken, async (req, res) => {
       const id = req.params.id;
       const updatedArtifact = req.body;
@@ -283,38 +334,6 @@ async function run() {
       const newVisa = req.body;
       console.log(newVisa);
       const result = await visaCollection.insertOne(newVisa);
-      res.send(result);
-    });
-
-    // Users related apis
-    app.get("/users", verifytoken, async (req, res) => {
-      const cursor = userCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-      console.log(req.cookies);
-    });
-    app.post("/users", async (req, res) => {
-      const newUser = req.body;
-      const result = await userCollection.insertOne(newUser);
-      res.send(result);
-    });
-
-    app.patch("/users", async (req, res) => {
-      const email = req.body.email;
-      const filter = { email };
-      const updatedLoginTime = {
-        $set: {
-          lastSignInTime: req.body?.lastSignInTime,
-        },
-      };
-      const result = await userCollection.updateOne(filter, updatedLoginTime);
-      res.send(result);
-    });
-
-    app.delete("/users/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await userCollection.deleteOne(query);
       res.send(result);
     });
 
